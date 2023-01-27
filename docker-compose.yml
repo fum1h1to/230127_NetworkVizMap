@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  back:
+    tty: true
+    build:
+      context: ./back
+      dockerfile: ./build/Dockerfile
+    container_name: network-viz-map-go
+    volumes:
+        - ./back:/go/src/app
+
+  front:
+    tty: true
+    build: 
+      context: ./front
+      dockerfile: ./docker/node/Dockerfile
+    container_name: network-viz-map-node
+    volumes:
+      - ./front:/code
+    ports:
+      - 3000:3000
