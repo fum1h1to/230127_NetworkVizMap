@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect, useRef, useState } from "react";
+import "./App.css";
 
 function App() {
+  const [message, setMessage] = useState("");
+  const webSocketRef = useRef<WebSocket>();
+
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:8080/ws");
+    webSocketRef.current = socket;
+
+    socket.addEventListener("message", event => {
+      setMessage(event.data);
+    });
+
+    return () => socket.close();
+  }, []);
+
+  const [inputText, setInputText] = useState("");
+  const submit: React.FormEventHandler = useCallback(
+    event => {
+      event.preventDefault();
+      webSocketRef.current?.send(inputText);
+    },
+    [inputText],
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>{JSON.stringify(message)}</h1>
+      <form onSubmit={submit}>
+        <input value={inputText} onChange={e => setInputText(e.target.value)} />
+        <button>送信</button>
+      </form>
     </div>
   );
 }

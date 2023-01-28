@@ -8,15 +8,20 @@ services:
       dockerfile: ./build/Dockerfile
     container_name: network-viz-map-go
     volumes:
-        - ./back:/go/src/app
-
-  front:
-    tty: true
-    build: 
-      context: ./front
-      dockerfile: ./docker/node/Dockerfile
-    container_name: network-viz-map-node
-    volumes:
-      - ./front:/code
+        - ./back:/go/src
     ports:
-      - 3000:3000
+      - 8080:8080
+
+  # dockerだと動作が重いので、nodeはホスト側で動かす。
+  # front:
+  #   tty: true
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+  #   build: 
+  #     context: ./front
+  #     dockerfile: ./docker/node/Dockerfile
+  #   container_name: network-viz-map-node
+  #   volumes:
+  #     - ./front:/code
+  #   ports:
+  #     - 3000:3000
