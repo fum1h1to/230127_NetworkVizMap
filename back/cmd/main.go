@@ -46,9 +46,6 @@ func webSocketHandleFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello from Closure")
-	})
     http.HandleFunc("/ws", webSocketHandleFunc)
 
     if err := http.ListenAndServe(":8080", nil); err != nil {
