@@ -1,4 +1,4 @@
-package cmd
+package main
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ func main() {
 	}
 	defer db.Close()
 	// If you are using strings that may be invalid, check that ip is not nil
-	ip := net.ParseIP("172.19.0.2")
+	ip := net.ParseIP("8.8.8.8")
 	record, err := db.City(ip)
 	if err != nil {
 		log.Fatal(err)

@@ -1,29 +1,14 @@
-package tcpflow
+package cmd
 
 import (
 	"fmt"
+    "log"
 	"io"
 	"os/exec"
-	"time"
-	"log"
 )
 
-func GetTime() (str string) {
-	tokyo, err := time.LoadLocation("Asia/Tokyo")
-	if err != nil {
-		log.Fatal(err)
-	}
-	t := time.Now().In(tokyo)
-
-	return t.Format("2006-01-02_15-04-05")
-}
-
 func Tcpflow() {
-	
-	outputDirName := GetTime()
-	outputDirName = "tcpflow-data/" + outputDirName
-
-	cmd := exec.Command("tcpflow", "-o", outputDirName)
+	cmd := exec.Command("tcpflow")
 	stdout, _ := cmd.StdoutPipe()
 
 	buff := make([]byte, 1024)
@@ -38,4 +23,8 @@ func Tcpflow() {
 		}
 		n, err = stdout.Read(buff)
 	}
+}
+
+func Say(){
+    fmt.Println("hello!")
 }

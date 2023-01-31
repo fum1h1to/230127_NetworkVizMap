@@ -6,6 +6,7 @@ import Leaflet from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { GeodesicLine } from "view/components/leaflet-local/GeodesicLine/GeodesicLine";
+import MarkerSchema from "types/markerSchema";
 
 // marker setting
 let DefaultIcon = Leaflet.icon({
@@ -17,7 +18,7 @@ let DefaultIcon = Leaflet.icon({
 Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
 const VizMap = (props: {
-  markers: { from: { lat: number; lng: number; }; to: { lat: number; lng: number; }; }[],
+  markers: MarkerSchema[],
 }) => {
   const [zoom, setZoom] = useState(2.3);
   const [position, setPosition] = useState({
