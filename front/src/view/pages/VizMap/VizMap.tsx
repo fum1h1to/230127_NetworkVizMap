@@ -6,7 +6,7 @@ import Leaflet from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import { GeodesicLine } from "view/components/leaflet-local/GeodesicLine/GeodesicLine";
-import MarkerSchema from "types/markerSchema";
+import MarkerSchema from "types/MarkerSchema";
 
 // marker setting
 let DefaultIcon = Leaflet.icon({
@@ -38,23 +38,22 @@ const VizMap = (props: {
           from.lng += 360;
         }
         return (
-          <>
+          <div key={index}>
           <Marker position={from}>
             <Popup>
-              A pretty CSS3 popup. <br /> Easily customizable.
+              srcport: { String(viz.srcport) }<br />
+              dstport: { String(viz.dstport) }
             </Popup>
           </Marker>
           <Polyline
-            key={index}
             positions={[from, viz.to]}
             pathOptions={{opacity: 0}}
           />
           <GeodesicLine
-            key={index}
             positions={[from, viz.to]}
             pathOptions={{color: "#000"}}
           />
-          </>
+          </div>
         )
       })}
     </MapContainer>

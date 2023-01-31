@@ -1,13 +1,15 @@
-package makedata
+package tcpxml2Other
 
 import (
 	"NetworkVizMap/cmd/packet-capture"
 	"NetworkVizMap/cmd/ip2LatLng"
+	"encoding/json"
 	// "fmt"
 	"strconv"
+	"log"
 )
 
-type MarkerSchema struct {
+type MarkerStruct struct {
 	From struct {
 		Lat float64	`json:"lat"`
 		Lng float64 `json:"lng"`
@@ -20,8 +22,8 @@ type MarkerSchema struct {
 	Dstport int	`json:"dstport"`
 }
 
-func MakeData(tcpflowXML *types.TcpflowXML) (datas *[]MarkerSchema){
-	markers := []MarkerSchema{}
+func GetMarkerStruct(tcpflowXML *types.TcpflowXML) (datas *[]MarkerStruct){
+	markers := []MarkerStruct{}
 
 	for _, v := range tcpflowXML.Configuration.Fileobject {
 		src_ipn := v.Tcpflow.Src_ipn
@@ -29,7 +31,7 @@ func MakeData(tcpflowXML *types.TcpflowXML) (datas *[]MarkerSchema){
 		srcport := v.Tcpflow.Srcport
 		dstport := v.Tcpflow.Dstport
 
-		marker := new(MarkerSchema)
+		marker := new(MarkerStruct)
 
 		src_ipn_lat, src_ipn_lng := ip2LatLng.GetLatLng(src_ipn)
 		dst_ipn_lat, dst_ipn_lng := ip2LatLng.GetLatLng(dst_ipn)
@@ -45,4 +47,12 @@ func MakeData(tcpflowXML *types.TcpflowXML) (datas *[]MarkerSchema){
 	}
 
 	return &markers
+}
+
+func GetJsonFromMarkerStruct(datas *[]MarkerStruct) (json_data []byte){
+	json_data, err := json.Marshal(datas)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return
 }

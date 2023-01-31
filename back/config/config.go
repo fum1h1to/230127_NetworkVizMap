@@ -5,5 +5,4 @@ const (
 
 	REPORT_FILE_NAME = "report.xml"
 	OUTPUT_ROOT_DIR = "tcpflow-data"
-	OUTPUT_PUBLIC_DATA_DIR = "public-data"
 )
