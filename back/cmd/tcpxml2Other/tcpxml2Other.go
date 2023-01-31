@@ -3,10 +3,12 @@ package tcpxml2Other
 import (
 	"NetworkVizMap/cmd/packet-capture"
 	"NetworkVizMap/cmd/ip2LatLng"
+	"NetworkVizMap/config"
 	"encoding/json"
 	// "fmt"
 	"strconv"
 	"log"
+    "io/ioutil"
 )
 
 type MarkerStruct struct {
@@ -14,10 +16,12 @@ type MarkerStruct struct {
 		Lat float64	`json:"lat"`
 		Lng float64 `json:"lng"`
 	} `json:"from"`
+	Srcip string `json:"srcip"`
 	To struct {
 		Lat float64 `json:"lat"`
 		Lng float64 `json:"lng"`
 	} `json:"to"`
+	Dstip string `json:"dstip"`
 	Srcport int `json:"srcport"`
 	Dstport int	`json:"dstport"`
 }
@@ -40,6 +44,8 @@ func GetMarkerStruct(tcpflowXML *types.TcpflowXML) (datas *[]MarkerStruct){
 		marker.From.Lng = src_ipn_lng
 		marker.To.Lat = dst_ipn_lat
 		marker.To.Lng = dst_ipn_lng
+		marker.Srcip = src_ipn
+		marker.Dstip = dst_ipn
 		marker.Srcport, _ = strconv.Atoi(srcport)
 		marker.Dstport, _ = strconv.Atoi(dstport)
 
@@ -54,5 +60,8 @@ func GetJsonFromMarkerStruct(datas *[]MarkerStruct) (json_data []byte){
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	file, _ := json.MarshalIndent(datas, "", " ")
+	_ = ioutil.WriteFile(config.OUTPUT_ROOT_DIR + "/frompcap/report.json", file, 0644)
 	return
 }

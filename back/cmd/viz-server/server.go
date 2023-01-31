@@ -27,7 +27,7 @@ func webSocketHandleFunc(w http.ResponseWriter, r *http.Request) {
     }
     defer ws.Close()
 
-    json_data := makeReturnData("test.pcap.pcapng")
+    json_data := makeReturnData("test.pcap")
 
     err = ws.WriteMessage(websocket.TextMessage, json_data)
     if err != nil {
@@ -42,6 +42,7 @@ func makeReturnData(inputFilePath string) (json_data []byte) {
 
 	datas := tcpxml2Other.GetMarkerStruct(tcpxml)
 	json_data = tcpxml2Other.GetJsonFromMarkerStruct(datas)
+
     return
 }
 

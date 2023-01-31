@@ -18,41 +18,89 @@ let DefaultIcon = Leaflet.icon({
 Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
 const VizMap = (props: {
+  fromORto: "from" | "to" | "all",
+  myipv4: string | undefined,
+  myipv6: string | undefined,
+  center: { lat: number, lng: number },
   markers: MarkerSchema[],
 }) => {
   const [zoom, setZoom] = useState(2.3);
-  const [position, setPosition] = useState({
-    lat: 35.6812405,
-    lng: 139.7649361,
-  });
+  const local_markers = JSON.parse(JSON.stringify(props.markers)) as MarkerSchema[];
 
+  local_markers.forEach((viz) => {
+
+    if (viz.srcip === props.myipv4 || viz.srcip === props.myipv6) {
+      viz.from.lat = props.center.lat;
+      viz.from.lng = props.center.lng;
+    }
+    if (viz.dstip === props.myipv4 || viz.dstip === props.myipv6) {
+      viz.to.lat = props.center.lat;
+      viz.to.lng = props.center.lng;
+    }
+
+    if (props.fromORto === "to") {
+      if (viz.to.lng + 180 < viz.from.lng ){
+        viz.to.lng += 360;
+      }
+    } else {
+      if (viz.from.lng + 180 < viz.to.lng ){
+        viz.from.lng += 360;
+      }
+    }
+
+  })
+  
   return (
-    <MapContainer center={position} zoom={zoom} style={{ width: "100%", height: "100%" }}>
+    <MapContainer center={props.center} zoom={zoom} style={{ width: "100%", height: "100%" }}>
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright";>OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      { props.markers.map((viz, index) => {
-        let from = viz.from;
-        if (viz.from.lng + 180 < viz.to.lng ){
-          from.lng += 360;
+      {
+        props.fromORto !== "all"
+        ? 
+        <Marker position={props.center}>
+          <Popup>
+            me
+          </Popup>
+        </Marker>
+        : 
+        <></>
+      }
+      { local_markers.filter((viz) => {
+        if (props.fromORto === "from" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined )) {
+          if (viz.srcip === props.myipv4 || viz.srcip === props.myipv6) {
+            return false
+          }
         }
+        else if (props.fromORto === "to" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined )) {
+          if (viz.dstip === props.myipv4 || viz.dstip === props.myipv6) {
+            return false
+          }
+        }
+
+        if ((viz.from.lng === 0 && viz.from.lat === 0) || (viz.to.lng === 0 && viz.to.lat === 0)) {
+          return false
+        }
+        return true
+      }).map((viz, index) => {
+        console.log(viz)
         return (
           <div key={index}>
-          <Marker position={from}>
-            <Popup>
-              srcport: { String(viz.srcport) }<br />
-              dstport: { String(viz.dstport) }
-            </Popup>
-          </Marker>
-          <Polyline
-            positions={[from, viz.to]}
-            pathOptions={{opacity: 0}}
-          />
-          <GeodesicLine
-            positions={[from, viz.to]}
-            pathOptions={{color: "#000"}}
-          />
+            <Marker position={props.fromORto === "to" ? viz.to : viz.from}>
+              <Popup>
+                index: { String(index) }<br />
+                lat,lng: { String(viz.from.lat) }, { String(viz.from.lng) }<br />
+                srcip: { String(viz.srcip) }<br />
+                dstip: { String(viz.dstip) }<br />
+                srcport: { String(viz.srcport) }<br />
+                dstport: { String(viz.dstport) }
+              </Popup>
+            </Marker>
+            <GeodesicLine
+              positions={props.fromORto === "to" ? [viz.to, viz.from] : [viz.from, viz.to]}
+              pathOptions={{color: "#000"}}
+            />
           </div>
         )
       })}

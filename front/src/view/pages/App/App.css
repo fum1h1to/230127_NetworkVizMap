@@ -37,6 +37,11 @@
   }
 }
 
+.controlBoxArea {
+  width: 100%;
+  height: 20vh;
+}
+
 .vizMapArea {
   width: 100%;
   height: 100vh;
