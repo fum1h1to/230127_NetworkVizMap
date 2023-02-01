@@ -84,7 +84,6 @@ const VizMap = (props: {
         }
         return true
       }).map((viz, index) => {
-        console.log(viz)
         return (
           <div key={index}>
             <Marker position={props.fromORto === "to" ? viz.to : viz.from}>

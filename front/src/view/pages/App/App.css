@@ -41,6 +41,9 @@
   width: 100%;
   height: 20vh;
 }
+.controlBoxArea div {
+  margin-bottom: 10px;
+}
 
 .vizMapArea {
   width: 100%;

@@ -1,39 +1,57 @@
 package server
 
 import (
-	// "fmt"
+	"fmt"
+    "os"
+    "io"
 	"log"
+    "time"
 	"net/http"
-	"github.com/gorilla/websocket"
+    "path/filepath"
     "NetworkVizMap/cmd/packet-capture/frompcap"
 	"NetworkVizMap/cmd/tcpxml2Other"
-	// "NetworkVizMap/config"
+	"NetworkVizMap/config"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-    WriteBufferSize: 1024,
-    // Add this lines
-    CheckOrigin: func(r *http.Request) bool {
-        return true
-    },
+func pcap2jsonHandleFunc(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("file uploaded")
+    uploadFilepath := fileUploadHandler(w, r)
+
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Content-Type", "application/json")
+    w.Write(makeReturnData(uploadFilepath))
+    fmt.Println("file uploaded end")
 }
 
-func webSocketHandleFunc(w http.ResponseWriter, r *http.Request) {
-    ws, err := upgrader.Upgrade(w, r, nil)
+func fileUploadHandler(w http.ResponseWriter, r *http.Request) (uploadFilepath string){
+    
+    file, fileHeader, err := r.FormFile("pcap")
     if err != nil {
-        log.Println("upgrade:", err)
-        return
+        log.Fatal(err)
     }
-    defer ws.Close()
+    defer file.Close()
 
-    json_data := makeReturnData("test.pcap")
-
-    err = ws.WriteMessage(websocket.TextMessage, json_data)
+    err = os.MkdirAll(config.FROMPCAP_UPLOAD_DIR, os.ModePerm)
     if err != nil {
-        log.Println("WriteMessage:", err)
-        return
+        log.Fatal(err)
     }
+    
+    dstpath := fmt.Sprintf("%s/%d%s", config.FROMPCAP_UPLOAD_DIR, time.Now().UnixNano, filepath.Ext(fileHeader.Filename))
+    
+    dst, err := os.Create(dstpath)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer dst.Close()
+
+    _, err = io.Copy(dst, file)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    
+    return dst.Name()
+
 }
 
 func makeReturnData(inputFilePath string) (json_data []byte) {
@@ -47,9 +65,10 @@ func makeReturnData(inputFilePath string) (json_data []byte) {
 }
 
 func StartServer() {
-    http.HandleFunc("/ws", webSocketHandleFunc)
+    mux := http.NewServeMux()
+    mux.HandleFunc("/pcap2json", pcap2jsonHandleFunc)
 
-    if err := http.ListenAndServe(":8080", nil); err != nil {
+    if err := http.ListenAndServe(":8080", mux); err != nil {
         log.Fatal(err)
     }
 }
