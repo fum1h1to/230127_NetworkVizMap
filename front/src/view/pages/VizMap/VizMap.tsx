@@ -5,8 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet"
 import Leaflet from "leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-import { GeodesicLine } from "view/components/leaflet-local/GeodesicLine/GeodesicLine";
-import MarkerSchema from "types/MarkerSchema";
+import { GeodesicLine } from "src/view/components/leaflet-local/GeodesicLine/GeodesicLine";
+import MarkerSchema from "src/types/MarkerSchema";
 
 // marker setting
 let DefaultIcon = Leaflet.icon({
