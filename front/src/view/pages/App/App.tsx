@@ -9,7 +9,7 @@ function App() {
   const [markers, setMarkers] = useState([])
   const [myipv4, setMyipv4] = useState<string | undefined>()
   const [myipv6, setMyipv6] = useState<string | undefined>()
-  const [center, setCenter] = useState<{lat: number, lng: number}>({lat: 1, lng: 1})
+  const [center, setCenter] = useState<{lat: number, lng: number}>({lat: 35, lng: 140})
   const [fromORto, setFromORto] = useState<"from" | "to" | "all">("all")
 
   // useEffect(() => {
@@ -62,7 +62,13 @@ function App() {
     
     setMyipv4(String(formData.get("myipv4")))
     setMyipv6(String(formData.get("myipv6")))
-    setCenter({lat: Number(formData.get("lat")), lng: Number(formData.get("lng"))})
+    let centerLat = Number(formData.get("lat"))
+    let centerLng = Number(formData.get("lng"))
+    if (centerLat == 0 && centerLng == 0) {
+      centerLat = 35
+      centerLng = 140
+    }
+    setCenter({lat: centerLat, lng: centerLng})
     setFromORto(String(formData.get("fromORto")) as "from" | "to" | "all")
     setPcap(null)
     setIsClick(false);
@@ -72,20 +78,20 @@ function App() {
     <div className="App">
       <div className="controlBoxArea">
         <form onSubmit={handleSubmit}>
-          <div>
+          <div className="controlPanel">
             <label>your IPv4</label>
             <input name="myipv4" placeholder="127.0.0.1" />
           </div>
-          <div>
+          <div className="controlPanel">
             <label>your IPv6</label>
             <input name="myipv6" placeholder=":::1" />
           </div>
-          <div>
+          <div className="controlPanel">
             <label>your Position</label>
-            <input name="lat" placeholder="lat" />
-            <input name="lng" placeholder="lng" />
+            <input name="lat" placeholder="lat (default: 35)" />
+            <input name="lng" placeholder="lng (default: 140)" />
           </div>
-          <div>
+          <div className="controlPanel">
             <label>visible</label>
             <select name="fromORto">
               <option value="from" selected>other → your</option>
@@ -93,11 +99,11 @@ function App() {
               <option value="all">all</option>
             </select>
           </div>
-          <div>
+          <div className="controlPanel">
             <label>pcap file</label>
             <input type="file" name="pcap" onChange={onChangePcap} />
           </div>
-          <div>
+          <div className="controlPanel">
             <button type="submit" disabled={isClick}>更新</button>
             { isClick ? <span>loading...</span> : <></>}
           </div>
