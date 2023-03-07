@@ -53,7 +53,11 @@ function App() {
         return res.json()
       })
       .then(res => {
-        setMarkers(res)
+        if (res.error) {
+          console.log('error');
+        } else {
+          setMarkers(res)
+        }
       })
       .catch(err => {
         console.log(err)

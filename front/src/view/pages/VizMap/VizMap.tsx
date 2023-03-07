@@ -39,17 +39,17 @@ const VizMap = (props: {
     }
 
     if (props.fromORto === "to") {
-      if (viz.to.lng + 180 < viz.from.lng ){
+      if (viz.to.lng + 180 < viz.from.lng) {
         viz.to.lng += 360;
       }
     } else {
-      if (viz.from.lng + 180 < viz.to.lng ){
+      if (viz.from.lng + 180 < viz.to.lng) {
         viz.from.lng += 360;
       }
     }
 
   })
-  
+
   return (
     <MapContainer center={props.center} zoom={zoom} style={{ width: "100%", height: "100%" }}>
       <TileLayer
@@ -58,22 +58,22 @@ const VizMap = (props: {
       />
       {
         props.fromORto !== "all"
-        ? 
-        <Marker position={props.center}>
-          <Popup>
-            me
-          </Popup>
-        </Marker>
-        : 
-        <></>
+          ?
+          <Marker position={props.center}>
+            <Popup>
+              me
+            </Popup>
+          </Marker>
+          :
+          <></>
       }
-      { local_markers.filter((viz) => {
-        if (props.fromORto === "from" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined )) {
+      {local_markers.filter((viz) => {
+        if (props.fromORto === "from" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined)) {
           if (viz.srcip === props.myipv4 || viz.srcip === props.myipv6) {
             return false
           }
         }
-        else if (props.fromORto === "to" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined )) {
+        else if (props.fromORto === "to" && (props.myipv4 !== "" || props.myipv4 !== undefined || props.myipv6 !== "" || props.myipv6 !== undefined)) {
           if (viz.dstip === props.myipv4 || viz.dstip === props.myipv6) {
             return false
           }
@@ -88,17 +88,17 @@ const VizMap = (props: {
           <div key={index}>
             <Marker position={props.fromORto === "to" ? viz.to : viz.from}>
               <Popup>
-                index: { String(index) }<br />
-                lat,lng: { String(viz.from.lat) }, { String(viz.from.lng) }<br />
-                srcip: { String(viz.srcip) }<br />
-                dstip: { String(viz.dstip) }<br />
-                srcport: { String(viz.srcport) }<br />
-                dstport: { String(viz.dstport) }
+                index: {String(index)}<br />
+                lat,lng: {String(viz.from.lat)}, {String(viz.from.lng)}<br />
+                srcip: {String(viz.srcip)}<br />
+                dstip: {String(viz.dstip)}<br />
+                srcport: {String(viz.srcport)}<br />
+                dstport: {String(viz.dstport)}
               </Popup>
             </Marker>
             <GeodesicLine
               positions={props.fromORto === "to" ? [viz.to, viz.from] : [viz.from, viz.to]}
-              pathOptions={{color: "#000"}}
+              pathOptions={{ color: "#000" }}
             />
           </div>
         )

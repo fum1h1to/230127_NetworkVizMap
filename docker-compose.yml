@@ -5,7 +5,7 @@ services:
     tty: true
     build:
       context: ./back
-      dockerfile: ./build/Dockerfile
+      dockerfile: ./docker/Dockerfile
     container_name: network-viz-map-go
     volumes:
         - ./back:/go/src
